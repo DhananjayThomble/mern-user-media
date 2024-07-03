@@ -1,0 +1,6 @@
+.vscode/settings.json
+node_modules
+backend/.env
+backend/pnpm-lock.yaml
+videos
+avatars
