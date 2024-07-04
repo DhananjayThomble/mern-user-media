@@ -13,7 +13,7 @@ app.use("/uploads", express.static("uploads"));
 // app.use(cors());
 
 const corsOptions = {
-  origin: "https://mern-prj1.netlify.app/",
+  origin: "https://mern-prj1.netlify.app",
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
