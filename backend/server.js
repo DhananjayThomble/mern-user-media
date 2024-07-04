@@ -4,11 +4,13 @@ import config from './config.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import videoRoutes from './routes/videoRoutes.js';
+import cors from 'cors';
 
 const app = express();
 
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+app.use(cors());
 
 mongoose.connect(config.mongoURI,)
     .then(() => console.log('MongoDB connected'))
@@ -18,7 +20,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/videos', videoRoutes);
 
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
