@@ -11,6 +11,7 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
 const EditProfileSchema = Yup.object().shape({
   firstname: Yup.string().required("First name is required"),
@@ -22,23 +23,30 @@ const EditProfileSchema = Yup.object().shape({
 const EditProfile = () => {
   const dispatch = useDispatch();
   const { profile, loading, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchUserProfile());
   }, [dispatch]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
+    const formData = new FormData();
+    Object.keys(values).forEach((key) => {
+      formData.append(key, values[key]);
+    });
     try {
       await axios.put(
         `${import.meta.env.VITE_REACT_APP_API_URL}/user/profile`,
-        values,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
       alert("Profile updated successfully");
+      navigate("/profile");
     } catch (error) {
       alert(error.response.data.error);
     } finally {
@@ -60,12 +68,13 @@ const EditProfile = () => {
           lastname: profile?.lastname || "",
           bio: profile?.bio || "",
           mobileNumber: profile?.mobileNumber || "",
+          avatar: null,
         }}
         validationSchema={EditProfileSchema}
         enableReinitialize
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form>
             <Box sx={{ mb: 2 }}>
               <Field
@@ -92,6 +101,16 @@ const EditProfile = () => {
                 as={TextField}
                 label="Mobile Number"
                 fullWidth
+              />
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <input
+                name="avatar"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  setFieldValue("avatar", event.currentTarget.files[0]);
+                }}
               />
             </Box>
             <Button

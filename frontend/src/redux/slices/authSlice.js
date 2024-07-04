@@ -17,11 +17,13 @@ export const authSlice = createSlice({
         token: localStorage.getItem('token') || null,
         loading: false,
         error: null,
+        isAuthenticated: false,
     },
     reducers: {
         logout: (state) => {
             state.user = null;
             state.token = null;
+            state.isAuthenticated = false;
             localStorage.removeItem('token');
         },
     },
@@ -34,6 +36,7 @@ export const authSlice = createSlice({
             .addCase(login.fulfilled, (state, { payload }) => {
                 state.user = payload.user;
                 state.token = payload.token;
+                state.isAuthenticated = true;
                 localStorage.setItem('token', payload.token);
                 state.loading = false;
             })

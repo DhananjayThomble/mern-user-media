@@ -23,10 +23,17 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (values, { setSubmitting }) => {
-    dispatch(login(values)).finally(() => {
-      setSubmitting(false);
-    });
-    navigate("/profile");
+    dispatch(login(values))
+      .then(() => {
+        navigate("/profile");
+      })
+      .catch((error) => {
+        console.error("Login failed:", error);
+      })
+      .finally(() => {
+        // Always stop submitting, regardless of the outcome
+        setSubmitting(false);
+      });
   };
 
   return (

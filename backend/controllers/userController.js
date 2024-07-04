@@ -1,6 +1,8 @@
 import User from '../models/userModel.js';
 import multer from 'multer';
 import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -49,7 +51,12 @@ export const updateUserProfile = async (req, res) => {
         if (lastname) updateFields.lastname = lastname;
         if (email) updateFields.email = email;
         if (mobileNumber) updateFields.mobileNumber = mobileNumber;
-        if (req.file) updateFields.avatar = req.file.path; // add avatar if file is uploaded
+        if (req.file) {
+            // prepend the base URL
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}/`;
+            const filePath = req.file.path.replace(/\\/g, '/');
+            updateFields.avatar = baseUrl + filePath;
+        }
 
         try {
             const user = await User.findByIdAndUpdate(req.user.id, updateFields, { new: true });

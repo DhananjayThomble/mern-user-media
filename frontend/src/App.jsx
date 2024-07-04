@@ -23,7 +23,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/edit" element={<EditProfile />} />
             <Route path="/videos/upload" element={<UploadVideo />} />
-            <Route path="/videos" element={<VideoList />} />
+            <Route path="/:firstname/videos" element={<VideoList />} />
           </Routes>
         </main>
       </Router>

@@ -34,7 +34,10 @@ export const uploadVideo = (req, res) => {
         }
 
         const { title, description } = req.body;
-        const url = req.file.path;
+        // const url = req.file.path;
+        const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}/`;
+        const url = baseUrl + req.file.path.replace(/\\/g, '/');
+
         // console.log('user:', req.user.id);
 
         try {
