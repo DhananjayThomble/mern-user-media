@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProfile } from "../../redux/slices/userSlice";
 import {
@@ -11,25 +11,32 @@ import {
   CardContent,
   CardMedia,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const { profile, loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
 
   useEffect(() => {
-    dispatch(fetchUserProfile());
-  }, [dispatch]);
+    dispatch(fetchUserProfile({ page, limit }));
+  }, [dispatch, page, limit]);
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">{error}</Typography>;
 
-  // for editing profile
   const handleEditProfile = () => {
-    // navigate to edit profile page
     navigate("/profile/edit");
+  };
+
+  const handleNextPage = () => {
+    if (profile.videos.length >= limit) setPage((prevPage) => prevPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) setPage((prevPage) => prevPage - 1);
   };
 
   return (
@@ -65,7 +72,7 @@ const Profile = () => {
         <Typography variant="h6" component="h2" gutterBottom>
           Uploaded Videos
         </Typography>
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
           {profile?.videos?.length ? (
             profile.videos.map((video) => (
               <Box key={video._id} sx={{ maxWidth: 200, marginRight: 2 }}>
@@ -85,6 +92,24 @@ const Profile = () => {
           ) : (
             <Typography variant="body1">No videos uploaded</Typography>
           )}
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handlePreviousPage}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNextPage}
+            disabled={!profile || profile.videos.length < limit}
+          >
+            Next
+          </Button>
         </Box>
         <Button
           component={Link}

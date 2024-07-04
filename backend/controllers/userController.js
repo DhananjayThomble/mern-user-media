@@ -30,7 +30,14 @@ const upload = multer({
 
 export const getUserProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate('videos');
+        const user = await User.findById(req.user.id)
+            .populate({
+                path: 'videos',
+                options: {
+                    limit: 5,
+                    sort: { createdAt: -1 } // Assuming videos have a 'createdAt' field
+                }
+            });
         res.json(user);
     } catch (error) {
         res.status(500).json({ error: error.message });
