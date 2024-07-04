@@ -1,24 +1,36 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import config from './config.js';
-import authRoutes from './routes/authRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import videoRoutes from './routes/videoRoutes.js';
-import cors from 'cors';
+import express from "express";
+import mongoose from "mongoose";
+import config from "./config.js";
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import videoRoutes from "./routes/videoRoutes.js";
+import cors from "cors";
 
 const app = express();
 
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
-app.use(cors());
+app.use("/uploads", express.static("uploads"));
+// app.use(cors());
 
-mongoose.connect(config.mongoURI,)
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
+const corsOptions = {
+  origin: "https://mern-prj1.netlify.app/",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/videos', videoRoutes);
+mongoose
+  .connect(config.mongoURI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
+
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/videos", videoRoutes);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
 
 const PORT = process.env.PORT || 5000;
 
